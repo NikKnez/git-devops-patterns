@@ -1,1 +1,1 @@
-api_key="sk-1234567890abcdef"
+api_key="${API_KEY}"  # Set via environment variable
