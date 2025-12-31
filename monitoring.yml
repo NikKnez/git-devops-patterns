@@ -4,5 +4,5 @@ kind: ConfigMap
 metadata:
   name: monitoring-config
 data:
-  scrape_interval: "30s"
-  environment: "staging"
+  scrape_interval: "60s"
+  environment: "production"
