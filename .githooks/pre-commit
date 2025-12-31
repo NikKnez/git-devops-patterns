@@ -1,0 +1,50 @@
+#!/bin/bash
+# Pre-commit hook: Run checks before allowing commit
+
+echo "Running pre-commit checks..."
+
+# Check for common mistakes
+if git diff --cached --name-only | grep -q "\.sh$"; then
+    echo "Checking shell scripts..."
+    for file in $(git diff --cached --name-only | grep "\.sh$"); do
+        if [ -f "$file" ]; then
+            # Check if script is executable
+            if [ ! -x "$file" ]; then
+                echo "   ERROR: $file is not executable"
+                echo "   Run: chmod +x $file"
+                exit 1
+            fi
+            
+            # Check for bash syntax errors
+            if ! bash -n "$file" 2>/dev/null; then
+                echo "   ERROR: Syntax error in $file"
+                exit 1
+            fi
+        fi
+    done
+    echo "✓ Shell scripts OK"
+fi
+
+# Check for secrets
+if git diff --cached | grep -iE "(password|secret|api_key|token).*=.*['\"]"; then
+    echo "   ERROR: Possible secret detected in commit!"
+    echo "   Remove sensitive data before committing"
+    exit 1
+fi
+echo "✓ No secrets detected"
+
+# Check for large files
+for file in $(git diff --cached --name-only); do
+    if [ -f "$file" ]; then
+        size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+        if [ "$size" -gt 1048576 ]; then  # 1MB
+            echo "   ERROR: $file is larger than 1MB"
+            echo "   Consider using Git LFS or excluding from repo"
+            exit 1
+        fi
+    fi
+done
+echo "✓ No large files"
+
+echo "  All pre-commit checks passed!"
+exit 0
