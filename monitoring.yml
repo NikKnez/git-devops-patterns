@@ -1,0 +1,8 @@
+# Monitoring configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-config
+data:
+  scrape_interval: "15s"
+  environment: "dev"
