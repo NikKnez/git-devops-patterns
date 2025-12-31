@@ -1,0 +1,36 @@
+#!/bin/bash
+# Enforce conventional commit format
+
+commit_msg=$(cat "$1")
+
+# Check if commit message follows conventional format
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,}$"; then
+    echo "  ERROR: Commit message doesn't follow conventional format"
+    echo ""
+    echo "Format: <type>(<scope>): <subject>"
+    echo ""
+    echo "Types:"
+    echo "  feat:     New feature"
+    echo "  fix:      Bug fix"
+    echo "  docs:     Documentation changes"
+    echo "  style:    Code style changes (formatting, etc)"
+    echo "  refactor: Code refactoring"
+    echo "  test:     Adding or updating tests"
+    echo "  chore:    Maintenance tasks"
+    echo "  perf:     Performance improvements"
+    echo "  ci:       CI/CD changes"
+    echo "  build:    Build system changes"
+    echo "  revert:   Reverting previous changes"
+    echo ""
+    echo "Examples:"
+    echo "  feat(api): add user authentication endpoint"
+    echo "  fix(database): resolve connection timeout issue"
+    echo "  docs(readme): update installation instructions"
+    echo ""
+    echo "Your commit message:"
+    echo "  $commit_msg"
+    exit 1
+fi
+
+echo "Commit message format OK"
+exit 0
